@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+    <!ENTITY manifest SYSTEM "../../../manifest.xml">
+]>
+<!-- $Id: build.xml 266292 2014-02-21 07:30:18Z ACHIEVO\richar.li $ -->
+<project name="av.biz.aamain" default="package" basedir=".">
+	<dirname property="module.basedir" file="${ant.file}" />
+	<property name="module.name" value="aamain" />
+	<property name="module.build.dir" location="${module.basedir}/build" />
+	<!-- override for a local build path -->
+	<import file="../../common.xml" />
+
+	<property name="module.ejb.desc-doc" value="${biz.etc.dir}/deploydoc/ejb-jar.${module.name}.xml" />
+
+	<path id="classpath">
+		<fileset dir="${base.lib.dir}">
+			<include name="j2ee/ejb-api.jar" />
+			<include name="j2ee/servlet-api.jar" />
+			<include name="j2ee/persistence.jar" />	
+			<include name="jakarta-commons/commons-lang.jar" />
+			<include name="jakarta-commons/commons-beanutils.jar" />
+			<include name="axis/axis-1_4/WEB-INF/lib/axis.jar" />
+			<include name="jakarta-commons/commons-logging.jar" />
+			<include name="jakarta-commons/commons-collections.jar" />			
+			<include name="j2ee/jaxrpc.jar" />
+			<include name="jdbc/log4jdbc/av-log4jdbc.jar" />
+			<include name="xml-parser/EXML.jar" />
+			<include name="spring/spring.jar" />
+			<include name="xml-parser/xerces.jar" />
+			<include name="jdbc/log4jdbc/av-log4jdbc.jar" />
+			<!--add for ejb3-->
+				<include name="jboss/jboss-annotations-ejb3.jar"/>
+				<include name="jboss/jboss-ejb3-client.jar"/>
+				<include name="jboss/jbossha.jar"/>
+				<include name="hibernate/hibernate3.jar"/>
+				<include name="hibernate/hibernate-annotations.jar"/>
+				<include name="hibernate/hibernate-search.jar"/>
+				<include name="hibernate/hibernate-commons-annotations.jar"/>
+				<include name="hibernate/hibernate-entitymanager.jar"/>
+				<include name="jboss/ejb3-persistence.jar"/>
+				<include name="j2ee/jms.jar" />
+				<include name="jboss/jboss-ejb3.jar"/>
+				<include name="jsoup/jsoup-1.7.3.jar" />
+		</fileset>
+		<fileset dir="${biz.dist.dir}">
+			<include name="av-framework.jar" />
+			<include name="av-models.jar" />
+			<include name="av-service.jar" />
+			<include name="av-queryengine.jar" />
+			<include name="av-daoInterfaces.jar" />
+			<include name="av-edms.jar" />
+			<include name="av-emse.jar" />
+			<include name="av-Icalendar.jar" />
+			<include name="av-Igis.jar" />
+			<include name="av-Icommunication.jar" />
+			<include name="av-indexer.jar" />
+			<include name="av-Ilucene.jar" />
+			<include name="av-globalsearch.jar" />
+		</fileset>
+	</path>
+
+	<target name="package-client-jar" depends="compile" description="Package shareable components">
+		<!-- client package -->
+		<jar destfile="${biz.dist.dir}/av-${module.name}-api.jar">
+			<fileset dir="${module.build.dir}/classes">
+				<exclude name="**/*EJBBean.class" />
+				<exclude name="**/*Business*.class" />
+				<exclude name="**/*DAO*.class" />
+			</fileset>	
+			&manifest;	
+		</jar>
+		<!-- document index package -->
+		<jar destfile="${biz.dist.dir}/av-${module.name}-index.jar">
+			<fileset dir="${module.build.dir}/classes">
+				<include name="**/CapDAO*.class" />
+				<include name="**/CapWorkDesDAO*.class" />
+				<include name="**/*Processor.class" />
+			</fileset>	
+			&manifest;	
+		</jar>
+		
+	</target>
+	
+	<target name="package" depends="compile, package-jar, package-client-jar" description="Package shareable components" />
+
+</project>
